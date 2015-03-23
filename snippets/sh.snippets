@@ -1,7 +1,7 @@
 # Shebang. Executing bash via /usr/bin/env makes scripts more portable.
 snippet #!
 	#!/usr/bin/env sh
-	
+
 snippet bash
 	#!/usr/bin/env bash
 
@@ -92,3 +92,42 @@ snippet fun
 	function ${1:function_name}() {
 		${0:#function_body}
 	}
+
+snippet bash-begin
+	#!/usr/bin/env bash
+
+	set -eu
+
+	_OLDPWD=$(pwd)
+	cd "${BASH_SOURCE[0]%/*}" || exit 1
+
+	SCRIPT_DIR="$(pwd)"
+
+	_echo() {
+	    echo "$(date '+%FT%T.%Z'):$@"
+	}
+
+	echo_info() {
+	    _echo "INFO" $*
+	}
+
+	echo_error() {
+	    _echo "ERROR" $*
+	}
+
+	error_exit() {
+	    echo_error $*
+	    exit 1
+	}
+
+	main() {
+	    ${0:#main_body}
+	}
+
+	main $@
+
+	[ -n "${_OLDPWD-}" ] && cd ${_OLDPWD}
+
+	exit
+	# EOF
+
