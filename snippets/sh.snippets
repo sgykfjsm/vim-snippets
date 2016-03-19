@@ -93,30 +93,37 @@ snippet fun
 		${0:#function_body}
 	}
 
-snippet bash-begin
+snippet bash-basic
 	#!/usr/bin/env bash
 
 	set -eu
 
 	_OLDPWD=$(pwd)
-	cd "${BASH_SOURCE[0]%/*}" || exit 1
+	test -d "${BASH_SOURCE[0]%/*}" && cd "${BASH_SOURCE[0]%/*}"
 
 	SCRIPT_DIR="$(pwd)"
 
+	at_exit(){
+		[ -n "${_OLDPWD-}" ] && cd "${_OLDPWD}"
+	}
+
+	trap at_exit EXIT
+	trap 'trap - EXIT; at_exit; exit 1' INT PIPE TERM
+
 	_echo() {
-	    echo "$(date '+%FT%T.%Z'):$@"
+	    echo "$(date '+%FT%T.%Z') $@"
 	}
 
 	echo_info() {
-	    _echo "INFO" $*
+	    _echo "INFO" "$*"
 	}
 
 	echo_error() {
-	    _echo "ERROR" $*
+	    _echo "ERROR" "$*"
 	}
 
 	error_exit() {
-	    echo_error $*
+	    echo_error "$*"
 	    exit 1
 	}
 
@@ -125,8 +132,6 @@ snippet bash-begin
 	}
 
 	main $@
-
-	[ -n "${_OLDPWD-}" ] && cd ${_OLDPWD}
 
 	exit
 	# EOF
