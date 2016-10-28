@@ -103,7 +103,7 @@ snippet bash-basic
 
 	SCRIPT_DIR="$(pwd)"
 
-	at_exit(){
+	at_exit() {
 		[ -n "${_OLDPWD-}" ] && cd "${_OLDPWD}"
 	}
 
@@ -111,7 +111,7 @@ snippet bash-basic
 	trap 'trap - EXIT; at_exit; exit 1' INT PIPE TERM
 
 	_echo() {
-	    echo "$(date '+%FT%T.%Z') $@"
+	    echo "$(date '+%FT%T.%Z') $*"
 	}
 
 	echo_info() {
@@ -131,7 +131,7 @@ snippet bash-basic
 	    ${0:#main_body}
 	}
 
-	main $@
+	main "$@"
 
 	exit
 	# EOF
